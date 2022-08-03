@@ -1,0 +1,68 @@
+﻿@model Sinema.ViewModels.FilmViewModel;
+
+    <div>
+        <h2>@Model.FilmName</h2>
+        <table>
+            <tr>
+                <td>
+                    <img src=@Model.Poster height="300px">
+                </td>
+                <td>
+                    <div>
+                        <p>Режиссер: @Model.Director</p>
+                        <p>Жанр: @Model.Genre</p>
+                        <p>Оценка: @Model.Rating</p>
+                        <p>Длительность: @Model.Duration</p>
+                        <div>Актеры: <br />
+                        @foreach (var actor in Model.Actors)
+                        {
+                        <p>@actor.FirstName @actor.LastName</p>
+                        }
+                        </div>
+                        
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <div>
+            <h3>Ближайшие сеансы</h3>
+            <div>
+                @{
+                    int i = 0;
+                    @while (i < Model.Sessions.Count && DateTime.Compare(((DateTime)Model.Sessions[i].FilmSession), DateTime.Today) < 0)
+                    {
+                        i++;
+                    }
+                    @for (int j = 0; j < 3; j++)
+                    {
+                        <p>@DateTime.Today.AddDays(j).ToString("d")</p>
+                        int k = 0;
+                        while (i < Model.Sessions.Count && DateTime.Compare(((DateTime)Model.Sessions[i].FilmSession), DateTime.Today.AddDays(j + 1)) < 0)
+                        {
+                            string filmSession = ((DateTime)Model.Sessions[i].FilmSession).ToString("H:mm");
+                            if (DateTime.Compare(((DateTime)Model.Sessions[i].FilmSession), DateTime.Now) > 0)
+                            {
+
+                                <a asp-controller="Film" asp-action="ShowSinemaRoom" asp-route-session="@Model.Sessions[i]" asp-route-filmName="@Model.FilmName">@filmSession</a>
+                                    }
+                                    else
+                                    {
+                                <p>@filmSession Недоступно</p>
+                            }
+                            i++;
+                            k++;
+                        }
+                        if (k == 0)
+                        {
+                            <p>Сеансов нет</p>
+                        }
+
+                    }
+                }
+
+
+            </div>
+        </div>
+    </div>
+
+
